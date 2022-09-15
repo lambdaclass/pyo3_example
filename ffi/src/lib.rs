@@ -1,13 +1,18 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use inner::Inner;
 
-#[pyclass]
-struct Outer {
+#[pyclass(unsendable)]
+pub struct Outer {
     inner: &mut Inner,
 }
 
+#[pymethods]
 impl Outer {
+    #[new]
     fn new() -> Outer {
         Outer {
             inner: &mut Inner::new(),
@@ -23,7 +28,7 @@ impl PyPrinter {
         Python::with_gil(|py| {
             let cell = PyCell::new(py, outer).unwrap();
             let locals = PyDict::new(py);
-            locals.set_item("outer", cell);
+            locals.set_item("outer", cell).unwrap();
             py.run("print(outer)", None, Some(locals)).unwrap();  
         });
     }

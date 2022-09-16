@@ -1,6 +1,3 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use inner::Inner;
@@ -13,9 +10,9 @@ pub struct Outer {
 #[pymethods]
 impl Outer {
     #[new]
-    fn new() -> Outer {
+    fn new(inner: &mut Inner) -> Outer {
         Outer {
-            inner: &mut Inner::new(),
+            inner,
         }
     }
 }
